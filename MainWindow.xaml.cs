@@ -48,8 +48,10 @@ namespace Truckonline_Demo_Widget
             var selected = true;
             foreach (var driver in fleet.drivers)
             {
+                if (!driver.driverEnabled)
+                    continue;
                 comboDrivers.Items.Add(
-                    new ComboBoxItem { Content = driver.driverFirstName + " " + driver.driverLastName + " - " + driver.driverUid, Tag = driver, IsSelected = selected }
+                    new ComboBoxItem { Content = driver.driverLastName + " " + driver.driverFirstName + " - " + driver.driverUid, Tag = driver, IsSelected = selected }
                 );
                 selected = false;
             }
@@ -80,16 +82,17 @@ namespace Truckonline_Demo_Widget
 
                 var parameters = new Dictionary<string, string>();
 
-                parameters["list"] = "0";
-                parameters["disable"] = "nav";
+                parameters["disable"] = "nav,stv";
                 parameters["cols"] = "TIC,ACC,TTD,TTW,TAT,TTS,TSA,KM,EL";
                 parameters["read_only"] = "1";
                 parameters["driver"] = ((this.comboDrivers.SelectedItem as ComboBoxItem).Tag as DriverStatusDetails).driverUid;
                 parameters["time_period"] = (this.comboPeriod.SelectedItem as ComboBoxItem).Tag as string;
                 parameters["date"] = this.datePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+                //parameters["map_options"] = "HOV";
                 parameters["authorization_code"] = impersonateResponse.authorizationCode;
 
-                var finalUrl = new Uri(Settings.EndPoint + "/eap/frontend-wrapper/fr/time?" + string.Join("&", parameters.Select(x => x.Key + "=" + x.Value)));
+                //var finalUrl = new Uri(Settings.EndPoint + "/frontend/fr/map?" + string.Join("&", parameters.Select(x => x.Key + "=" + x.Value)));
+                var finalUrl = new Uri(Settings.EndPoint + "/frontend/fr/activities?" + string.Join("&", parameters.Select(x => x.Key + "=" + x.Value)));
 
                 Debug.WriteLine(finalUrl);
 
